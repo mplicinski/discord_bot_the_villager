@@ -1,0 +1,31 @@
+{
+  "name": "discord_bot_the_villager",
+  "version": "1.0.0",
+  "description": "A discord bot to help friends do activities online together.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mplicinski/discord_bot_the_villager.git"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "app",
+    "friends",
+    "play",
+    "together",
+    "watch"
+  ],
+  "author": "Matthew Plicinski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mplicinski/discord_bot_the_villager/issues"
+  },
+  "homepage": "https://github.com/mplicinski/discord_bot_the_villager#readme",
+  "dependencies": {
+    "discord.js": "^12.4.1"
+  }
+}
