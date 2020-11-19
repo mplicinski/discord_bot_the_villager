@@ -1,11 +1,82 @@
 const Discord = require("discord.js");
-const botSettings = require("./botsettings.json")
+const botSettings = require("./botsettings.json");
+const fs = require("fs");
 
 const bot = new Discord.Client();
-const token = botSettings.token
-const prefix = botSettings.prefix
+const token = botSettings.token;
+const prefix = botSettings.prefix;
 
 bot.login(token);
+bot.commands = new Discord.Collection();
+
+fs.readdir("./cmds/", (err, files) => {
+    if(err) console.error(err);
+
+    let jsfiles = files.filter(f => f.split(".").pop() === "js");
+    if(jsfiles.length <= 0) {
+        console.log("No commands to load");
+    }
+
+    console.log(`Loading ${jsfiles.length} commands`);
+    jsfiles.forEach((f, i) => {
+        let props = require(`./cmds/${f}`);
+        console.log(`${i + 1}: ${f} loaded`);
+        bot.commands.set(props.help.name, props);
+    });
+});
+
+
+bot.on('ready', () => {
+    console.log(`Logged in as ${bot.user.tag}!`);
+    console.log(bot.commands);
+})
+
+
+
+//ping method
+bot.on('message', message => {
+    if (message.content.toLowerCase().startsWith('ping')) {
+        message.reply("Pong!");
+    }
+});
+
+//pong method
+bot.on('message', message => {
+    if (message.content.toLowerCase().startsWith('pong')) {
+        message.reply("Ping!");
+    }
+});
+
+//cute love reaction <3 
+bot.on('message', message => {
+    if (message.content.toLowerCase().includes('love')) {
+        message.react('❤️');
+    }
+});
+
+//command caller
+bot.on("message", async message => {
+    if(message.author.bot) return;
+    if(message.channel.type == 'dm') return;
+
+    let msgArray = message.content.split(" ");
+    let command = msgArray[0];
+    let args = msgArray.slice(1);
+
+    if(!command.startsWith(prefix)) return;
+
+    let cmd = bot.commands.get(command.slice(prefix.length));
+    if (cmd) cmd.run(bot ,message, args);
+})
+
+
+
+
+
+
+
+
+
 
 var gameSessions = {};
 class GameSession {
@@ -25,72 +96,21 @@ class GameSession {
     }
 }
 
-bot.on('ready', () => {
-    console.log(`Logged in as ${bot.user.tag}!`);
-})
-
-//ping method
-bot.on('message', msg => {
-    if (msg.content.toLowerCase().startsWith('ping')) {
-        msg.reply("Pong!")
-    }
-});
-
-//pong method
-bot.on('message', msg => {
-    if (msg.content.toLowerCase().startsWith('pong')) {
-        msg.reply("Ping!")
-    }
-});
-
-//cute love reaction <3 
-bot.on('message', msg => {
-    if (msg.content.toLowerCase().includes('love')) {
-        msg.react('❤️')
-    }
-});
-
-bot.on("message", async msg => {
-    if(msg.author.bot) return;
-    if(msg.channel.type == 'dm') return;
-
-    let msgArray = msg.content.split(" ");
-    let cmd = msgArray[0];
-    let args = msgArray.slice(1);
-
-    if(!cmd.startsWith(prefix)) return;
-    if (cmd === `${prefix}userinfo`) {
-        let embed = new Discord.MessageEmbed()
-            .setAuthor(msg.author.username)
-            .setDescription(`${msg.author.username} is a super cool person!`)
-            .setColor("#9B59B6")
-            .addField("Full Username", `${msg.author.username}#${msg.author.discriminator}`)
-            .addField("ID", msg.author.id)
-            .addField("Created At", msg.author.createdAt);
-
-        msg.channel.send(embed);
-
-        return
-    }
-})
-
-
-
 //game sesssion message trigger
-bot.on('message', msg => {
-    if (msg.content.toLowerCase().startsWith("!gamesession")) {
+bot.on('message', message => {
+    if (message.content.toLowerCase().startsWith("!gamesession")) {
 
         gameName = '';
         maxPlayers = 0;
-        date = Date()
+        date = Date();
 
-        const channel = msg.channel
-        channel.send("Creating Games Session")
+        const channel = message.channel;
+        channel.send("Creating Games Session");
         
 
-        var promptText = `${gameName} Game Sesssion created. Add reaction to join!`
-        msg.reply(promptText).then(botMsg => {
-            gameSessions[botMsg.id] = new GameSession(botMsg, 4);
+        var promptText = `${gameName} Game Sesssion created. Add reaction to join!`;
+        message.reply(promptText).then(botMessage => {
+            gameSessions[botMessage.id] = new GameSession(botMessage, 4);
         })
     }
 });
@@ -110,7 +130,7 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 
     var gameSession = gameSessions[reaction.message.id];
     if (gameSession) {
-        gameSession.addPlayer(user)
+        gameSession.addPlayer(user);
     }
 });
 
