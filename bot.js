@@ -8,6 +8,7 @@ const prefix = botSettings.prefix;
 
 bot.login(token);
 bot.commands = new Discord.Collection();
+bot.mutes = require("./mutes.json");
 
 fs.readdir("./cmds/", (err, files) => {
     if(err) console.error(err);
