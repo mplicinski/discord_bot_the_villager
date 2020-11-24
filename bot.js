@@ -8,8 +8,9 @@ const prefix = botSettings.prefix;
 
 bot.login(token);
 bot.commands = new Discord.Collection();
-bot.mutes = require("./mutes.json");
+//bot.mutes = require("./mutes.json"); //will add this back in if I want to do timed mutes
 
+//loading all bot commands in the cmds directory
 fs.readdir("./cmds/", (err, files) => {
     if(err) console.error(err);
 
@@ -32,19 +33,20 @@ bot.on('ready', () => {
     console.log(bot.commands);
 })
 
-
-
-//ping method
+//overly complicated but entertainig ping method
 bot.on('message', message => {
-    if (message.content.toLowerCase().startsWith('ping')) {
-        message.reply("Pong!");
-    }
-});
-
-//pong method
-bot.on('message', message => {
-    if (message.content.toLowerCase().startsWith('pong')) {
-        message.reply("Ping!");
+    if (message.content.toLowerCase().startsWith('ping') ||
+    message.content.toLowerCase().startsWith('pong')) {
+        words = message.content.toLowerCase().split(' ');
+        reply = "";
+        words.forEach(word => {
+            if(word.startsWith("ping")) {
+                reply = reply.concat("Pong! ");
+            } else if (word.startsWith("pong")) {
+                reply = reply.concat("Ping! ");
+            }
+        })
+        message.reply(reply); 
     }
 });
 

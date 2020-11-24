@@ -1,5 +1,3 @@
-const fs = module.require("fs");
-
 module.exports.run = async(bot, message, args) => {
   if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.reply("You do have permission to manage messages.");
 
@@ -49,6 +47,7 @@ module.exports.run = async(bot, message, args) => {
   if(toMute.roles.cache.has(role.id)) {
     return message.reply(`${toMute.displayName} is already muted`);
   }
+
 
   await toMute.roles.add(role) 
   return message.reply(`${toMute.displayName} has been muted.`);
