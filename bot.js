@@ -69,7 +69,12 @@ bot.on("message", async message => {
     if(!command.startsWith(prefix)) return;
 
     let cmd = bot.commands.get(command.slice(prefix.length));
-    if (cmd) cmd.run(bot ,message, args);
+    try {
+        if (cmd) cmd.run(bot ,message, args);
+    } catch (e) {
+        console.error(e);
+    }
+    
 })
 
 
