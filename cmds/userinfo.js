@@ -19,19 +19,3 @@ module.exports.run = async (bot, message, args) => {
 module.exports.help = {
   name: "userinfo"
 }
-
-
-function deleteMessages(amount) {
-	return new Promise(resolve => {
-		if (amount > 10) throw new Error('You can\'t delete more than 10 Messages at a time.');
-		setTimeout(() => resolve('Deleted 10 messages.'), 2000);
-	});
-}
-
-deleteMessages(5).then(value => {
-	// `deleteMessages` is complete and has not encountered any errors
-	// the resolved value will be the string "Deleted 10 messages"
-}).catch(error => {
-	// `deleteMessages` encountered an error
-	// the error will be an Error Object
-});
