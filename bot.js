@@ -77,6 +77,11 @@ bot.on("message", async message => {
     
 })
 
+// catch unhandled errors 
+process.on('unhandledRejection', error => {
+	console.error('Unhandled promise rejection:', error);
+});
+
 
 
 
